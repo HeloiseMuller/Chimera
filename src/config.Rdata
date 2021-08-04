@@ -1,0 +1,44 @@
+##### Necesssary for all scrip #####
+dir = "~/Dropbox/ResistanceCaterpillars/Data"
+samples = c("SR2", "SR32")
+#samples = c("SR2", "SR32", "SRA", "SRB", "SRC", "SRD", "SRE")
+#samples = c("NonTarget_Ntyphae", "NonTarget_Gsparganii")
+
+#If want to change samples names on figures, give vector of names:
+names = samples
+#names = c("Ntyphae","Gsparganii")
+
+#Species names in files
+spWasp = "Ctyphae"
+spHost = "Snonagrioides"
+
+#Species names for figures
+species = c("S. nonagriodes", "C. typhae")
+
+##### For scripts 1 & 6 #####
+if(exists("depth")){
+  Coverage = data.frame(Sample = samples,
+    Names = names,
+    #Depth on reference genome
+    depth1 = c(41.04, 48.86), #, 143.1, 104.7, 129.2, 129.7, 106.12),
+    #Depth on the other species
+    depth2 = c(0.5, 0.86), #, 1.9, 1.28, 1.55, 1.54,1.33), 
+    #Depth on proviral segments (in average)
+    depthBV = c(3.37, 12.46), #, 0, 0, 0, 0, 0),
+    #Proporiton of the reference genome covered
+    proportion1 = c(0.972, 0.974), #, 0.989, 0.987, 0.994 ,0.988, 0.995),
+    #Proportion of the second genome covered
+    proportion2 = c(0.006, 0.074)) #,  0.006, 0.006, 0.006 , 0.006, 0.006))
+}
+    
+##### For scripts 5 and more #####
+
+#Choose as many colors as samples
+colors = c("red", "blue") #, "green", "yellow", "burlywood","pink", "orange") 
+
+
+#Number of reads sequenced mapping on the species
+if(exists("IPS")){
+    Tot_ReadsOnSesamia = c(142554988, 168095095)
+}
+

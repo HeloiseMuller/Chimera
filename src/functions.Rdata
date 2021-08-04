@@ -1,0 +1,36 @@
+#Organized raw table of chimeric reads
+chimera_organized = function(chimera){
+    chimera = chimera[!duplicated(chimera$PCRdup),]
+    chim_Host = chimera[which(chimera$sp==spHost),]
+    chim_Wasp = chimera[which(chimera$sp==spWasp),]
+    colnames(chim_Wasp)=c("readName", "subject.s", "identity.s", "length.s", "mismatch.s", "indel.s",
+                         "qStart.s", "qEnd.s", "sStart.s", "sEnd.s", "evalue.s", "score.s", "sp.s",
+                         "subject", "identity", "length", "mismatch", "indel", "qStart", "qEnd",
+                         "sStart", "sEnd", "evalue", "score", "sp",
+                         "readLength", "chimeric", "overlap", "PCRdup" , "insertionCoord", "chimericPoint", "inv")
+    x = rbind(chim_Host, chim_Wasp)
+    return(x)
+    }
+
+#Function to find chimeric points in each segment. Can be used only with apply
+    #bed_segment is the bed of 1 segment only
+chimera_segment = function(file_chimera, bed_segment){
+    chimera_segment = filter(file_chimera, subject.s==bed_segment['contig'] & chimericPoint>=as.numeric(bed_segment['begin']) & chimericPoint<=as.numeric(bed_segment['end']))
+    chimera_segment = mutate(chimera_segment, Segment = bed_segment['Segment'])
+    return(chimera_segment)
+}
+
+#Function to extract the number of each segment
+fSeg =  function(x) {
+   x$Seg <-  as.numeric(str_extract(x$Segment, "\\d+"))
+   return(x)
+  }
+  
+#function to round to the upper accuracy
+round_any = function(x, accuracy, f=round){f(x/ accuracy) * accuracy}
+
+
+  
+  
+  
+  
