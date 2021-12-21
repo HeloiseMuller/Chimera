@@ -25,7 +25,7 @@ if(help==TRUE)
 require(data.table)
 require(dplyr)
 require(stringr)
-library(data.table)
+require(ggplot2)
 
 depth=TRUE
 IPS=FALSE
@@ -42,7 +42,7 @@ cov = lapply(cov, function(x) {
   })
 
 print("Reading IEs..")
-chimera_alongSegments_IE = lapply(paste0(dir, "/Chimera/", samples, "_all_chimera_alongSegments_IE.txt"), fread, header = T, sep = "\t")
+chimera_alongSegments_IE = lapply(paste0(dir, "/Chimera/", samples, "_all_chimera_alongHIMs_IE.txt"), fread, header = T, sep = "\t")
 IE = lapply(chimera_alongSegments_IE, function(x){
     i = which(samples==unique(x$sample))
     x = x %>% group_by(sample, Segment) %>% summarise(NbChimera = sum(NbChimera), NbIE = n())
@@ -114,6 +114,84 @@ lapply(dt, function(x){
 })
 
 
+dev.off()
+
+
+##Barplot to compare NbRead and Cov in each sample 
+
+#Calcutae ratio between cov and NbIE
+fratio = function(x){
+    x$ratio = x$Depth/x$NbChimera
+    x= setorder(x, NbChimera)
+    return(x)
+}
+
+dt_cor = lapply(dt_cor, fratio)
+
+png(paste0(dir, "/Figures/Mirror_Depth_NbRead.png"),  width = 10, height = 10, units = 'in', res = 600)    
+#Figure in mirror Cov & NbReads with ratio on top of each bars
+
+#function to round to the upper accuracy
+round_any = function(x, accuracy, f=round){f(x/ accuracy) * accuracy}
+
+
+layout(matrix(c(1,1,1,1,2,2,2,2,3,3,3,3,0,0,4,4,4,4,5,5,5,5,0,0), 2, 3*4, byrow=TRUE))
+lapply(seq_along(dt_cor), function(i) {
+    x = setorder(dt_cor[[i]], NbChimera)
+    pt = barplot(x$NbChimera, names.arg=x$Seg, ylim=c(-round_any(max(x$Depth), ifelse(max(x$Depth)/100>1, 100, 10), f=ceiling),round_any(max(x$NbChimera),  ifelse(max(x$Depth)/100>1, 100, 10), f=ceiling)+30), cex.names=0.5, las=2,  col="gray", border=F, yaxt='n', main = names[i])
+    barplot(-x$Depth, names.arg=NA, ylim=c(-round_any(max(x$Depth),  ifelse(max(x$Depth)/100>1, 100, 10), f=ceiling),round_any(max(x$NbChimera),  ifelse(max(x$Depth)/100>1, 100, 10), f=ceiling)+30), , add=T, las=2, col="grey43", border=F, yaxt='n')
+    text(3, max(x$NbChimera)*0.9, paste0("rho = ", round(cor.test(x$NbChimera, x$Depth, method = "spearman")$estimate, 3)), cex=0.9)
+    text(pt, x$NbChimera+15 , round(fratio(x)$ratio,1), cex=0.6)
+    axis(side=2, at=seq(-round_any(max(x$Depth),  ifelse(max(x$Depth)/100>1, 100, 10), f=ceiling), round_any(max(x$NbChimera),  ifelse(max(x$Depth)/100>1, 100, 10), f=ceiling), ifelse(max(x$Depth)/100>1, 100, 10)), labels=gsub('-','',seq(-round_any(max(x$Depth),  ifelse(max(x$Depth)/100>1, 100, 10), f=ceiling), round_any(max(x$NbChimera),  ifelse(max(x$Depth)/100>1, 100, 10), f=ceiling), ifelse(max(x$Depth)/100>1, 100, 10))), las=2, cex.axis=0.5)
+    return(x)
+})
+
+dev.off()  
+
+##Boxplot
+dt_box = bind_rows(dt_cor)
+dt_box$Sample <- factor(dt_box$Sample, levels = samples, ordered = T)
+
+png(paste0(dir, "/Figures/Boxplot_Depth_NbRead.png"),  width = 7, height = 5, units = 'in', res = 600)    
+dt_box %>% ggplot(aes(x=Sample, y=ratio, fill=Sample)) +
+    geom_boxplot(fill = colors, outlier.shape = NA) +
+    geom_jitter(size=0.7) +  
+    scale_x_discrete(labels = names) +
+    theme(legend.position = "none") +
+    xlab("") +  ylab("Ratio depth/chimera") +
+    geom_hline(yintercept = 0.63, linetype = "dashed")
+dev.off()
+
+
+
+
+
+test = lapply(dt_cor, function(x){
+    i = which(samples==unique(x$Sample))
+    #d = filter(Coverage, Sample==unique(x$Sample))$depth2
+    d = filter(dt[[i]], Seg == 15)$Depth
+    x$DepthCorrected = x$Depth-d+0.43 #depth on control
+    x$ratioCorrected = x$DepthCorrected / x$NbChimera
+    return(x)
+    })
+    
+t = lapply(seq_along(test), function(i){
+    colnames(test[[i]]) = c("Seg", paste0("ratioCorrected_",samples[i])) 
+    return(test[[i]])
+    })
+t = Reduce(function(x, y) merge(x, y, by = "Seg", all = TRUE), t)    
+    
+test = bind_rows(test)
+test$Sample <- factor(test$Sample, levels = samples, ordered = T)
+  
+png(paste0(dir, "/Figures/Boxplot_Depth_NbRead_Corrected.png"),  width = 7, height = 5, units = 'in', res = 600)    
+test %>% ggplot(aes(x=Sample, y=ratioCorrected, fill=Sample)) +
+    geom_boxplot(fill = colors, outlier.shape = NA) +
+    geom_jitter(size=0.7) +  
+    scale_x_discrete(labels = names) +
+    theme(legend.position = "none") +
+    xlab("") +  ylab("Ratio depth/chimera") +
+    geom_hline(yintercept = 0.63, linetype = "dashed")
 dev.off()
 
 

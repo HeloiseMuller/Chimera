@@ -17,14 +17,13 @@ if(!exists("config_file")){help = TRUE; print("config_file is missing")}
 
 if(help==TRUE)
 {
-    print("5-NbIE_alongSegments --args --config_file=\"config.Rdata\" ")
+    print("5-NbIE_alongSegments --args --config_file=\"config.Rdata\"") 
     quit("no")
 }
 
 require(data.table)
 require(dplyr)
 require(stringr)
-library(data.table)
 
 depth=TRUE
 IPMH=TRUE
@@ -34,37 +33,67 @@ source(paste0(scriptPath, "/functions.Rdata"))
 print("Reading IEs..")
 #Read file10 = IE
 chimera_alongSegments_IE = lapply(paste0(dir, "/Chimera/", samples, "_all_chimera_alongSegments_IE.txt"), fread, header = T, sep = "\t")
+chimera_alongHIM = lapply(paste0(dir, "/Chimera/", samples, "_all_chimera_alongHIMs_IE.txt"), fread, header = T, sep = "\t")
 
 
-
-#Liste Segment with integrations to give order
+#Liste Segments with integrations to give order
 HIMSegments = c("S1", "S4", "S7",
     "S10", "S11", "S12", "S14", "S16", "S17", "S18", 
     "S24", "S26", "S27", "S28", 
     "S32", "S35") 
+    
+###### Calculate IPMS in HIM only ######
 
-IE = lapply(chimera_alongSegments_IE, function(x){
+HIM_IE = lapply(chimera_alongHIM, function(x){
     i = which(samples==unique(x$sample))
-    x = x %>% group_by(sample, Segment) %>% summarise(NbChimera = sum(NbChimera), NbIE = n()) %>%
+    y = x %>% group_by(sample, Segment) %>% summarise(NbChimera = sum(NbChimera), NbIE = n()) %>%
     mutate(., Tot_ReadsInSample = Tot_ReadsOnSesamia[i]) %>%
     mutate(., IPMH = NbIE*1000000/Tot_ReadsInSample)
-    print(x)
     #For the figures, we are intereted only by segments with HIM
-    y = filter(x, Segment %in% HIMSegments) 
+    #y = filter(y, Segment %in% HIMSegments) 
     #Check if some HIM-segments are not integrated
-    missing = HIMSegments[! HIMSegments %in% x$Segment]
+    missing = HIMSegments[! HIMSegments %in% y$Segment]
     #If there are HIM-segments with no integration, add an empty line
     if (length(missing)>0) {
-        y = rbind(y, data.frame(sample = unique(x$sample), Segment = missing, NbChimera =0, NbIE=0, Tot_ReadsInSample = Tot_ReadsOnSesamia[i], IPMH = 0))
+        y = rbind(y, data.frame(sample = unique(y$sample), Segment = missing, NbChimera=0, NbIE=0, Tot_ReadsInSample = Tot_ReadsOnSesamia[i], IPMH = 0))
         }
     return(y)
+    })
+    
+###### Calculate all IPMS along segments ######
+
+Seg_IE = lapply(chimera_alongSegments_IE, function(x){
+    i = which(samples==unique(x$sample))
+    y = x %>% group_by(sample, Segment) %>% summarise(NbChimera = sum(NbChimera), NbIE = n()) %>%
+    mutate(., Tot_ReadsInSample = Tot_ReadsOnSesamia[i]) %>%
+    mutate(., IPMH = NbIE*1000000/Tot_ReadsInSample)
+    #Check if some HIM-segments are not integrated
+    missing = HIMSegments[! HIMSegments %in% y$Segment]
+    #If there are HIM-segments with no integration, add an empty line
+    if (length(missing)>0) {
+        y = rbind(y, data.frame(sample = unique(y$sample), Segment = missing, NbChimera=0, NbIE=0, Tot_ReadsInSample = Tot_ReadsOnSesamia[i], IPMH = 0))
+        }
+    
+    #Add a colomn specifing if it is a segment with a HIM
+    y = mutate(y,  HIM = ifelse(Segment %in% HIMSegments, "yes", "no"))
+    
+    #Add a colomn giving the percentage of IE in HIM (0% if no HIM)
+    tmp = merge(y, HIM_IE[[i]], by = "Segment", suffixes = c(".Seg",".HIM")) %>%
+        mutate(., PercIEinHIM = `NbIE.HIM`*100/`NbIE.Seg`) %>%
+        select(., c("Segment", "PercIEinHIM"))
+    y = left_join(y, tmp, by = "Segment")
+    y[is.na(y$PercIEinHIM),]$PercIEinHIM = 0
     
     #Print interesting info
     cat("\n")
     print(samples[i])
     print(y)
+    
+    return(y)
     })
 cat("\n")
+
+
 
 
 ###### Do following figures with IPMS
@@ -76,24 +105,23 @@ rownames(data_stacked) = names
 
 for (i in HIMSegments){
     for (j in 1:length(samples)){
-        data_stacked[names[j],i] <- subset(IE[[j]], Segment==i)$IPMH 
-    }#png("../All_samples/Graph_NbIE_RPM_Segments.png",  res = 600, width = 7, height = 7, units = "in")
-
+        data_stacked[names[j],i] <- subset(HIM_IE[[j]], Segment==i)$IPMH 
+    }
 }
 
 data_stacked[,"All segments"] = rowSums(data_stacked, na.rm = T)
 
 cat("\n")
-print("Number of IPMS by HIM-containing segments in all samples:")
+print("Number of IPMS in HIM in all samples:")
 print(data_stacked)
 
 #### Figures comparing the relative numbers of chimeric reads, with abolute values on top of the bars
 
 #Absoulte values of Number of IE and chimeric reads:
-absolute_IE_seg = bind_rows(IE) %>% group_by(Segment) %>% summarise(TotNbChimera = sum(NbChimera), TotNbIE=sum(NbIE))
+absolute_IE_seg = bind_rows(HIM_IE) %>% group_by(Segment) %>% summarise(TotNbChimera = sum(NbChimera), TotNbIE=sum(NbIE))
 absolute_IE_seg = absolute_IE_seg[match(HIMSegments, absolute_IE_seg$Segment),] #Segments in same order as on graph
 
-png(paste0(dir, "/Figures/IPMH_Segments.png"),  res = 600, width = 7, height = 7, units = "in")
+png(paste0(dir, "/Figures/IPMHinHIM_Segments.png"),  res = 600, width = 7, height = 7, units = "in")
 par(mar=c(5,4.5,1,1))
 x = barplot(data_stacked[,1:length(HIMSegments)], names.arg = gsub('egment_','',HIMSegments), 
         cex.names = 1, cex.axis = 1.5, cex.lab = 1.5,  las = 2,
@@ -110,12 +138,12 @@ text(x, colSums(data_stacked)+0.02, labels =  paste0('(',as.character(as.matrix(
 
 dev.off()
 
-absolute_IE_sample = bind_rows(lapply(IE, function(x){
+absolute_IE_sample = bind_rows(lapply(HIM_IE, function(x){
  x = data.frame(sample = unique(x$sample), TotNbChimera = sum(x$NbChimera), TotNbIE = sum(x$NbIE))
  }))
  
 #png("../All_samples/Graph_NbIE_RPM_samples.png",  res = 600, width = 7, height = 7, units = "in")
-png(paste0(dir, "/Figures/IPMH_Samples.png"),  res = 600, width = 7, height = 7, units = "in")
+png(paste0(dir, "/Figures/IPMHinHIM_Samples.png"),  res = 600, width = 7, height = 7, units = "in")
 par(mar=c(5.8,4.5,1,1))
 x = barplot(data_stacked[,"All segments"], 
         cex.names = 1.2, cex.axis = 1.5, cex.lab = 1.5,  las =2,

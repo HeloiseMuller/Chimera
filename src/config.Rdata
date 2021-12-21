@@ -1,7 +1,7 @@
 ##### Necesssary for all scrip #####
-dir = "~/Dropbox/ResistanceCaterpillars/Data"
-samples = c("SR2", "SR32")
-#samples = c("SR2", "SR32", "SRA", "SRB", "SRC", "SRD", "SRE")
+dir = "~/Dropbox/Newpapier/ResistanceCaterpillars/Data"
+#samples = c("SR2", "SR32")
+samples = c("SR2", "SR32", "SRA", "SRB", "SRC", "SRD", "SRE")
 #samples = c("NonTarget_Ntyphae", "NonTarget_Gsparganii")
 
 #If want to change samples names on figures, give vector of names:
@@ -38,7 +38,7 @@ colors = c("red", "blue") #, "green", "yellow", "burlywood","pink", "orange")
 
 
 #Number of reads sequenced mapping on the species
-if(exists("IPS")){
+if(exists("IPMH")){
     Tot_ReadsOnSesamia = c(142554988, 168095095)
 }
 

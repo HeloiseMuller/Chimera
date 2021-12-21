@@ -18,7 +18,7 @@ if(!exists("bed")){help = TRUE; print("bed is missing")}
 
 if(help==TRUE)
 {
-    print("3-FindChimera_alongSegments.R --args --config_file=\"config.Rdata\" --bed=\"CtBV.bed\"")
+    print("3-FindChimera_alongSegments.R --args --config_file=\"config.Rdata\" --bed=\"CtBV.bed\" --meta=\"Table_CtBV\"")
     quit("no")
 }
 
@@ -26,7 +26,6 @@ require(data.table)
 require(Hmisc)
 require(dplyr)
 require(stringr)
-library(data.table)
 
 source(config_file)
 source(paste0(scriptPath, "/functions.Rdata"))
@@ -34,6 +33,7 @@ source(paste0(scriptPath, "/functions.Rdata"))
 print("Reading argument files")
 bed = fread(bed)
 colnames(bed) = c("contig", "begin","end","Segment")
+meta = fread(meta)
 
 print("Reading files containing all chimera...")
 #Read file2 = all chimera but organized
@@ -88,6 +88,15 @@ chimera_alongSegments = lapply(seq_along(samples), function(i) {
     #Return the table and add a colomn containing sample name
     return(x %>%  mutate(., sample = samples[i]))   
     })
+    
+##Extract chimera in HIM
+chimera_alongHIM = lapply(seq_along(samples), function(i) {
+    #Coordinates of the HIMs:
+    bed = meta[, c(1,2,7,8)]
+    colnames(bed) = c("Segment","contig", "begin", "end")    
+    bind_rows(apply(bed, 1, function(x) chimera_segment(file_chimera=chimera_alongSegments[[i]], bed_segment=x)))
+    })
+
 
 ########################################################
 ############# Calculate exact number of IE #############
@@ -99,22 +108,34 @@ chimera_alongSegments_IE = lapply(chimera_alongSegments, function(x){
     return(x)
     })
 
+### Object containing only IE in HIM ###
+chimera_alongHIM_IE = lapply(seq_along(samples), function(i) {
+    #Coordinates of the HIMs:
+    bed = meta[, c(1,2,7,8)]
+    colnames(bed) = c("Segment","contig", "begin", "end")    
+    bind_rows(apply(bed, 1, function(x) chimera_segment(file_chimera=chimera_alongSegments_IE[[i]], bed_segment=x)))
+    })
 
 ########################################################
 ####################### Outputs #######################
 ########################################################
 #For each sample, print the number of chimeric reads and the number of IE
-resume = data.frame(NbChimera=NA, NbIE=NA)
+resume = data.frame(NbChimera=NA, NbIE_Tot=NA)
 cat("\n")
+
 for (i in 1:length(samples)){
     resume$NbChimera = nrow(chimera_alongSegments[[i]])
-    resume$NbIE = nrow(chimera_alongSegments_IE[[i]])
+    resume$NbIE_Tot = nrow(chimera_alongSegments_IE[[i]])
+    resume$NbIE_HIMcontainingSegments = nrow(filter(chimera_alongSegments_IE[[i]], Segment %in%  meta[!is.na(meta$HIM_start),]$Segment))
+    resume$NbIE_inHIM = nrow(chimera_alongHIM_IE[[i]])
     print(names[i])
     print(resume)
     cat("\n")
 }
 
-print("Saving outputs, if chimera along segments...")
+
+
+print("If there are chimera along segments, saving outputs...")
 for (i in 1:length(samples)){
     #save only non empty outputs
     if (nrow(chimera_alongSegments[[i]])!=0){
@@ -125,6 +146,14 @@ for (i in 1:length(samples)){
         #Save file 10 = file of IE along all segments I used for all my downstream analysis too
         write.table(chimera_alongSegments_IE[[i]],
         paste0(dir, "/Chimera/", samples[i], "_all_chimera_alongSegments_IE.txt"),
+        sep = "\t", row.names = F, col.names = T, quote = F)
+        #Save file 11 = file of chimeric Reads along HIM only
+        write.table(chimera_alongHIM[[i]],
+        paste0(dir, "/Chimera/", samples[i], "_all_chimera_alongHIMs.txt"),
+        sep = "\t", row.names = F, col.names = T, quote = F)
+        #Save file 12 = file of IE along HIMs
+        write.table(chimera_alongHIM_IE[[i]],
+        paste0(dir, "/Chimera/", samples[i], "_all_chimera_alongHIMs_IE.txt"),
         sep = "\t", row.names = F, col.names = T, quote = F)
     } 
 }
