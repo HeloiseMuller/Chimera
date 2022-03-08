@@ -34,8 +34,8 @@ library(data.table)
 source(config_file)
 source(paste0(scriptPath, "/functions.Rdata"))
 
-print("Read the file cointing all chimera along segments")
-chimera_C.typhae_vs_S.nonagrioides = bind_rows(lapply(paste0(dir,"/Chimera/", samples, "_all_chimera_alongSegments.txt"), fread))
+print("Read the file cointing all chimera along segments, without PCR duplications")
+chimera_C.typhae_vs_S.nonagrioides = bind_rows(lapply(paste0(dir,"/Chimera/", samples, "_all_chimera_alongSegments_noPCRdup.txt"), fread))
 
 print("Read annotation table")
 annotation = fread(Annotation_segments)

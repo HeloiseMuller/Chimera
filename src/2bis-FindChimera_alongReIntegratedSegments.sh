@@ -5,7 +5,7 @@ for i in $samples
 do
     echo $i
 	#Extract reads saved in the R script=file6:
-	echo "Making fata file"
+	echo "Making fasta file"
 	seqtk subseq $dir/blastn/${i}_trimmed_vs_Ctyphae.fasta $dir/Chimera/${i}_Reads_SReintegrated_cat.lst > $dir/Chimera/${i}_Reads_SReintegrated_cat.fasta
 	echo "Running blastn"
 	#Run blastn on sample_Reads_SReintegrated_cat.fasta, against the proviral segments=file7: 

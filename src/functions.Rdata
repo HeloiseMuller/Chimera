@@ -1,6 +1,5 @@
 #Organized raw table of chimeric reads
-chimera_organized = function(chimera){
-    chimera = chimera[!duplicated(chimera$PCRdup),]
+chimera_organized = function(chimera, PCRdup=FALSE){
     chim_Host = chimera[which(chimera$sp==spHost),]
     chim_Wasp = chimera[which(chimera$sp==spWasp),]
     colnames(chim_Wasp)=c("readName", "subject.s", "identity.s", "length.s", "mismatch.s", "indel.s",
