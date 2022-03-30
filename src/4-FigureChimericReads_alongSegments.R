@@ -16,10 +16,11 @@ help = FALSE
 if(!exists("config_file")){help = TRUE; print("config_file")}
 if(!exists("initialize") & !exists("ParametersFigure")){help = TRUE; print("Either ParametersFigure.txt is missing, or you need to set initialize to true")}
 if(initialize==1 & exists("ParametersFigure")){help = TRUE; print("initialize and ParametersFigure are not compatible")}
-if(!exists("init_bas")){help = TRUE; print("init_bas")}
-if(!exists("init_ytext")){help = TRUE; print("init_ytext")}
-if(!exists("init_size_seg")){help = TRUE; print("init_size_seg")}
-if(!exists("init_yleg")){help = TRUE; print("init_yleg")}
+if(initialize!=1 & !exists("ParametersFigure")){help = TRUE; print("ParametersFigure missing")}
+if(initialize!=1 & !exists("init_bas")){help = TRUE; print("init_bas missing")}
+if(initialize!=1 & !exists("init_ytext")){help = TRUE; print("init_ytext missing")}
+if(initialize!=1 & !exists("init_size_seg")){help = TRUE; print("init_size_seg missing")}
+if(initialize!=1 & !exists("init_yleg")){help = TRUE; print("init_yleg missing")}
 
 if(help==TRUE)
 {
