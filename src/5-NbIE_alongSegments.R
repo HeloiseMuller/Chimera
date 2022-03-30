@@ -60,7 +60,7 @@ HIM_IE = lapply(chimera_alongHIM, function(x){
     return(y)
     })
     
-###### Calculate all IPMS along segments ######
+###### Calculate all IPMH along segments ######
 
 Seg_IE = lapply(chimera_alongSegments_IE, function(x){
     i = which(samples==unique(x$sample))
@@ -87,7 +87,7 @@ Seg_IE = lapply(chimera_alongSegments_IE, function(x){
     #Print interesting info
     cat("\n")
     print(samples[i])
-    print(y)
+    print(y, n=Inf) #Inf to print all rows
     
     return(y)
     })
@@ -96,7 +96,7 @@ cat("\n")
 
 
 
-###### Do following figures with IPMS
+###### Do following figures with IPMH
 
 #Prepare data for stacked barplot
 data_stacked = matrix(nrow = length(samples), ncol = length(HIMSegments)+1) #Need data like that to make the stacked plot
@@ -112,7 +112,7 @@ for (i in HIMSegments){
 data_stacked[,"All segments"] = rowSums(data_stacked, na.rm = T)
 
 cat("\n")
-print("Number of IPMS in HIM in all samples:")
+print("Number of IPMH in HIM in all samples:")
 print(data_stacked)
 
 #### Figures comparing the relative numbers of chimeric reads, with abolute values on top of the bars
