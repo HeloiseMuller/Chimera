@@ -1,17 +1,31 @@
-#### Output of the script FindChimercReads ####
-Here, we have all the chimera inter-species, not matter their positions
-We still have PCR duplicat
-file1 = *_chimera_C.typhae_vs_S.nonagrioides.txt
+# Pipeline Chimera
 
-#### Outputs of my script FindChimera_AlongSegments ####
+## FindChimericReads.R
 
-# Like file1 but file2 is organiszed (all Ctyphae in the same colomn)
-# No PCR duplicat
-file2 = *_chimera_C.typhae_vs_S.nonagrioides_ordered.txt
+This script look for chimeric reads between two genomes.
+It ouputs a file named  *_chimera_spWasp_vs_spHost.txt
 
-# Bed files of file2, with either Ctyphae coordinates or S.nonagrioides
-file3 = *_chimera_C.typhae_vs_S.nonagrioides_ordered.bed_Ctyphae
-file4 = *_chimera_C.typhae_vs_S.nonagrioides_ordered.bed_Snonagrioides
+The other scripts process chimeric reads that correspond to polyDNAviruses.
+
+## 1-Coverage.R
+
+This script make a plot on the sequencing depth and coverage on species1, species2, and polyDNAviruses.
+
+## 2-FindChimera_alongReIntegratedSegments.R
+
+This script read *_chimera_spWasp_vs_spHost.txt and outputs several files:
+-  *_chimera_spWasp_vs_spHost_ordered.txt: the only difference with the input is that the table is ordered, ie that for each chimeric reads, the information of the wasp has the suffix .s and the information of host has no suffix.
+-  *_chimera_spWasp_vs_spHost_ordered.bedSpWasp: bed file of the coordinates on the wasp where the chimeric reads map
+-  *_Reads_SReintegrated_cat.lst: list on the reads that map on polydnavirus taht have to pe processed differently. Indeed, Re-integrated segments cannot integrate in the host genome so these chimeric reads probably correspond to the parental proviral segments.
+
+## 2bis-FindChimera_alongReIntegratedSegments.sh
+
+This bash script check whether chimeric reads from re-integrated segments map on the parental proviral segments. It outputs *_Reads_SReintegrated_cat_vs_CtBV.txt
+
+## 3-FindChimera_alongSegments.R
+
+
+
 
 # All the chimeric reads that fall on re-integrated segments
 file5 = *_Reads_SReintegrated_cat.lst
