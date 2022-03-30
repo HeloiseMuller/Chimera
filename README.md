@@ -24,32 +24,20 @@ This bash script check whether chimeric reads from re-integrated segments map on
 
 ## 3-FindChimera_alongSegments.R
 
+Inputs: 
+- a configuration file
+- the bed file of proviral segments
+- metadata about the proviral segments, with their positions, the presence of HIM, and their orientation
+- *_Reads_SReintegrated_cat_vs_CtBV.txt if the file exist in the directory
 
+Outputs:
+- *_all_chimera_alongSegments.txt: file that contains all chimeric reads between the host and the proviral segments from the bed fime
+- *_all_chimera_alongSegments_noPCRdup.txt: same as above, but without the PCR duplications
+-  *_all_chimera_alongHIMs.txt: same as above (no PCR dup either), but the file contains only chimeric reads that map in HIMs.
+- *_all_chimera_alongSegments_IE.txt: file that contais one line per integration events (IE). Specified how many chimeric reads cover each IE.
+- *_all_chimera_alongHIMs_IE.txt: as above, but the file contains only IE mediated by HIMs
 
-
-# All the chimeric reads that fall on re-integrated segments
-file5 = *_Reads_SReintegrated_cat.lst
-
-#### Outputs specific to re-integrated segments ####
-
-# seqtk subseq on file5 to get fasta reads 
-file6 = *_Reads_SReintegrated_cat.fasta
-
-# Blastn of file6 on proviral segments
-file7 = *_Reads_SReintegrated_cat_vs_CtBV.txt
-
-# Run the script FindChimercReads on file7 (keep the same blast on S. nonagrioides)
-file8 = *_chimera_SReintegrated_vs_S.nonagrioides.txt
-
-
-##### Final outputs of my script FindChimera_AlongSegments.R ####
-
-file9 = *_chimera_alongSegments.txt
-This a the file of chimeric Reads along segments I used for all my downstream analysis
-Here, chimeric reads in HIMs but also outside (really anything that falls in proviral segments, without any filtre)
-Here, the chimeric reads that fell in re-integrated segments are sum up with the ones in the proviral segments
-
-file10 = *_all_chimera_alongSegments_IE.txt
-This is a file cointing IE. It is like file 9 but we keep only one line per IE
-
-
+Run the scrip with
+```
+Rscript 3-FindChimera_alongSegments.R --args --config_file=\"config.Rdata\" --bed=\"CtBV.bed\" --meta=\"Table_CtBV.txt\"
+```
