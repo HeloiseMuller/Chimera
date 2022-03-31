@@ -52,3 +52,29 @@ One has to run the script a first time to visualy set some graphical parametes, 
 ```
 Rscript 4-FigureChimericReads_alongSegments.R --args --config_file=\"config.Rdata\" --Annotation_segments=\"Table_CtBV.txt\" --initialize=1
 ```
+Depending on the height of the bars, fill the file `ParametersFigure`. The first colomn is the name of the segment, the second set the left pannels and the third set the right panels. One has to give 3 numbers: the begining of the x axis, the end, show value on the axis.
+
+Then, the user can run the script a second time with:
+```
+Rscript 4-FigureChimericReads_alongSegments.R --args --config_file=\"config.Rdata\" --Annotation_segments=\"Table_CtBV.txt\" --initialize=0 --ParametersFigure=\"ParametersFigur.txt\" --init_bas=400 --init_ytext=200 --init_size_seg=650 --init_yleg=850
+```
+The user might want to modify the four last parameters to get a cleaner graph.
+`--init_bas`: set the width of the rectangle representing the proviral segment
+ `--init_ytext`: set the y position of the name of the proviral segment
+ `--init_size_seg`: set the size of the segments that shows the begining and end of each segment 
+ `--init_yleg`: set the y position of the number under the segments that shows the begining and end of each segment 
+ 
+ ## 5-NbIE_alongSegments.R
+ 
+ This script process the number of IE along segments, without PCR duplications.
+ 
+  ```
+ 5-NbIE_alongSegments --args --config_file=\"config.Rdata\"
+ ```
+ It reads two files:*_all_chimera_alongSegments_IE.txt and *_all_chimera_alongHIMs_IE.txt
+ 
+ It outputs 2 figures: both show the the number of IMPH (number of integration event per million reads of host sequenced), one for each sample, and one for each proviral segment.
+ It also outputs summaized tables giving the number of IPMH for each sample and segment, and also the percentage of IE that falls in HIM
+ 
+ ## 6-NbIEvsDepth.R
+ 
