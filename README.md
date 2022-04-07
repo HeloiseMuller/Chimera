@@ -78,3 +78,9 @@ The user might want to modify the four last parameters to get a cleaner graph.
  
  ## 6-NbIEvsDepth.R
  
+This scripts compare the number of chimeric reads to the sequencing depth for each segment.
+Since PCR duplicates were not filtered out to calculate the sequencing depth, we keep them too in the number of chimeric reads.
+```
+6-NbIEvsDepth.R --args --config_file=\"config.Rdata\" --depth_dir=\"directory/\" --meta=\"Table_CtBV.txt\"
+```
+`depth_dir` is the direcotry where is located one file per sample, each containing the sequencing depth on each segment. These files are composed of 5 colomns: the first 3 colomns correspond to a bed file for each segment, the 4th is the segment name, and the 5th is the sequencing depth on this segment. This file can be generated with CovWindows (https://github.com/HeloiseMuller/CovWindows).
