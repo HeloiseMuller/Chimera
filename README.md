@@ -5,6 +5,24 @@
 This script look for chimeric reads between two genomes.
 It ouputs a file named  *_chimera_spWasp_vs_spHost.txt
 One has to modify the head of the script directly:
+```
+Path and variables to set
+species = c("Ctyphae","Cphragmitella")                       #the target species corresponding to the blast results thereafter (in the same order) 
+path="/mnt/65To/Heloise/Projet_2_Camille/"
+sample="NonTarget_Cphragmitella_a"
+print(sample)
+TrimmedReads=T #if false, all reads have the same length, if true, each read has a different length
+print("Read length of the reads")
+readLength=fread(paste0(path,"blastn/NonTarget_Cphragmitella_trimmed_vs_Ctyphae.length"), header = F)   #number if TrimmedReads==F ; table if TrimmedReads==T (length 1st, readname 2nd)
+#ATTENTION to have the exact same reads names in readLength and blasts
+#Output in the directory path/Chimera
+# import the output blast tabular files of reads against sequences (genomic contigs) from the 2 species (e.g. wasp and host caterpillar)
+print("Read blastn 1")
+blastOnGenome1=fread(paste0(path,"blastn/NonTarget_Cphragmitella_trimmed_vs_Ctyphae_subsetCphragmitella_filtered134_splita.txt"), header = F, sep = "\t") 
+#blastOnGenome1=fread(paste0(path, "blastn/", sample,"_Reads_SReintegrated_cat_vs_CtBV.txt"), header = F, sep = "\t") #When use script on chimera reads of re-integrated segments (also need to change name output)
+print("Read blastn 2")
+blastOnGenome2=fread(paste0(path,"blastn/NonTarget_Cphragmitella_trimmed_vs_", species[1],"_vs_", species[2], ".txt"), header = F, sep = "\t")
+```
 
 
 The other scripts process chimeric reads that correspond to polyDNAviruses.
