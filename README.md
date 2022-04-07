@@ -4,23 +4,25 @@
 
 This script look for chimeric reads between two genomes.
 It ouputs a file named  *_chimera_spWasp_vs_spHost.txt
+One has to modify the head of the script directly:
+
 
 The other scripts process chimeric reads that correspond to polyDNAviruses.
 
 ## 1-Coverage.R
 
-This script make a plot on the sequencing depth and coverage on species1, species2, and polyDNAviruses.
+This script make a plot of the sequencing depth and coverage on species1, species2, and polyDNAviruses.
 
 ## 2-FindChimera_alongReIntegratedSegments.R
 
 This script read *_chimera_spWasp_vs_spHost.txt and outputs several files:
 -  *_chimera_spWasp_vs_spHost_ordered.txt: the only difference with the input is that the table is ordered, ie that for each chimeric reads, the information of the wasp has the suffix .s and the information of host has no suffix.
 -  *_chimera_spWasp_vs_spHost_ordered.bedSpWasp: bed file of the coordinates on the wasp where the chimeric reads map
--  *_Reads_SReintegrated_cat.lst: list of the reads that map on polydnavirus taht have to pe processed differently. Indeed, Re-integrated segments cannot integrate in the host genome so these chimeric reads probably correspond to the parental proviral segments.
+-  *_Reads_SReintegrated_cat.lst: list of the reads that map on polydnavirus that have to be processed differently. Indeed, Re-integrated segments cannot integrate in the host genome so these chimeric reads probably correspond to the parental proviral segments.
 
 ## 2bis-FindChimera_alongReIntegratedSegments.sh
 
-This bash script check whether chimeric reads from re-integrated segments map on the parental proviral segments. It outputs *_Reads_SReintegrated_cat_vs_CtBV.txt
+This bash script check whether chimeric reads from re-integrated segments map on the parental proviral segments. It outputs *_Reads_SReintegrated_cat_vs_CtBV.txt. One can use this output to run again FindChimericReads.R, to validate these chimeric reads. One can replace the output of the blastn against spWasp by *_Reads_SReintegrated_cat_vs_CtBV.txt, and keep the output of the blastn againt spHost.
 
 ## 3-FindChimera_alongSegments.R
 
