@@ -18,7 +18,7 @@ readLength=fread(paste0(path,"blastn/sample_trimmed_vs_spWasp.length"), header =
 ```
 The script will automatically reads the 2 outputs of blastn located in the subdirectory blastn of `path`:
 `path/blastn/sample_trimmed_vs_spWasp.txt` and `path/blastn/sample_trimmed_vs_spWasp_vs_spHost.txt`
-If the locations or the file names are diferent, one can directly give the name of the files in the script with `blastOnGenome1` and `blastOnGenome2`.
+If the locations or the file names are different, one can directly give the name of the files in the script with `blastOnGenome1` and `blastOnGenome2`.
 
 The script will output the chimeric reads found between spWasp and spHost in the subdirectory Chimera of `path`, under the name sample_chimera_spWasp_vs_spHost.txt. One can change this automatic name by changing the file name at the very bottom of the script in write.table().
 
