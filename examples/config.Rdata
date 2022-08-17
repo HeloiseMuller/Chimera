@@ -1,0 +1,42 @@
+##### Necesssary for all scrip #####
+
+#Give the path of the waorking directory
+dir = "~/Dropbox/RisksCtyphae/AllDataMerged/"
+
+#Give the names of the samples as they are in the file names
+samples = c("a1", "SR2", "SR32")
+
+#Give the names of the samples as we want them on the figures
+names = c("Caterpillar", "Adult-1", "Adult-6")
+
+#Species name to write on figures of the two reference genome
+species = c("S. nonagrioides", "C. typhae") 
+
+
+##### For scripts 1 & 6 only #####
+if(exists("depth")){
+  Coverage = data.frame(Sample = samples,
+    Names=names,
+    #Depth on reference genome of the sample (S. nonagrioides)
+    depth1 = c(89.44, 41.04, 48.86),
+    #Depth on the other species (C. typhae)
+    depth2 = c(23.30, 0.5, 0.86), 
+    #Depth on proviral segments (in average)
+    depthBV = c(70.2422, 3.37, 12.46),
+    #Proporiton of the reference genome covered
+    proportion1 = c(0.979, 0.972, 0.974),
+    #Proportion of the second genome covered
+    proportion2 = c(0.988, 0.006, 0.074))
+}
+    
+##### For scripts 5 and more #####
+
+#Choose one color per sample
+colors=c("red", "blue", "green") 
+
+
+#Number of reads sequenced mapping on the species (to normalized the bumber of integration events to IPMH)
+if(exists("IPMH")){
+    Tot_ReadsOnSesamia = c(310568520, 142554988, 168095095) #Not include samples without any IE
+}
+
