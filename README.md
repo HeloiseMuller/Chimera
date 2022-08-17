@@ -1,7 +1,7 @@
 # Pipeline Chimera
 
-This pipeline allows to process data the same way as in Muller et al. (2021) https://doi.org/10.1128/JVI.00684-21. It was written for the article Muller et al. (2022). It is composed of several scripts to run on the following order. 
-The numeroted script chimeric reads specically for studies on polyDNAviruses.
+This pipeline allows to process data the same way as in Muller et al. (2021) https://doi.org/10.1128/JVI.00684-21. It was written for the article Muller et al. (2022). It is composed of several scripts to run in the same order as listed here. 
+The numeroted scripts process chimeric reads specifically for studies on polyDNAviruses.
 
 ## Run blastn
 Blastn has to be run on the two reference genomes between which one is looking for chimeric reads. One can use the WorkflowBowBlast (https://github.com/HeloiseMuller/WorkflowBowBlast) to process the data until this step.
