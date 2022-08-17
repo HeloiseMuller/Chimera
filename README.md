@@ -83,7 +83,7 @@ One has to run the script a first time to visualy set some graphical parametes, 
 ```
 Rscript 4-FigureChimericReads_alongSegments.R --args --config_file=\"config.Rdata\" --Annotation_segments=\"Table_CtBV.txt\" --initialize=1
 ```
-Depending on the height of the bars, fill the file `ParametersFigure`. The first colomn is the name of the segment, the second set the height of the y axis of the left pannel (min, max, tick every) and the third set it for the right panels. 
+Depending on the height of the bars, fill the file `ParametersFigure`. The first colomn is the name of the segment, the second set the height of the y axis of the left pannel (min, max, tick every) and the third set it for the right panels. Set NA at the thirs colomn for segments which are devoid of HIM.
 
 Then, the user can run the script a second time with:
 ```
