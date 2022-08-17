@@ -1,7 +1,9 @@
 # Pipeline Chimera
 
-This pipeline allows to process data the same way as in Muller et al. (2021) https://doi.org/10.1128/JVI.00684-21. It was written for the article Muller et al. (2022). It is composed of several scripts to run in the same order as listed here. 
+This pipeline allows to process data the same way as in Muller et al. (2021) https://doi.org/10.1128/JVI.00684-21. It was written for the article Muller et al. (202?). It is composed of several scripts, located in `src/`, to run in the same order as listed here. 
 The numeroted scripts process chimeric reads specifically for studies on polyDNAviruses.
+
+In `examples/`, one can find examples of files needed to run the scripts.
 
 ## Run blastn
 Blastn has to be run on the two reference genomes between which one is looking for chimeric reads. One can use the WorkflowBowBlast (https://github.com/HeloiseMuller/WorkflowBowBlast) to process the data until this step.
@@ -41,6 +43,11 @@ This script read the file *_chimera_spWasp_vs_spHost.txt and outputs several fil
 -  *_chimera_spWasp_vs_spHost_ordered.txt: the only difference with the input is that the table is ordered, i.e. that for each chimeric read, the information on the wasp has the suffix .s and the information on the host has no suffix.
 -  *_chimera_spWasp_vs_spHost_ordered.bedSpWasp: bed file of the coordinates on the wasp where the chimeric reads map
 -  *_Reads_SReintegrated_cat.lst: list of the reads that map on polydnavirus that have to be processed differently. Indeed, Re-integrated segments cannot integrate in the host genome so these chimeric reads probably correspond to the parental proviral segments.
+
+Run the scrip with:
+```
+Rscript 2-FindChimera_alongReIntegratedSegments.R --args --config_file=\"config.Rdata\" --ReInserted_Segments=\"ReInserted_CtBV.bed\"`
+```
 
 ## 2bis-FindChimera_alongReIntegratedSegments.sh
 
