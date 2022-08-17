@@ -124,17 +124,17 @@ absolute_IE_seg = absolute_IE_seg[match(HIMSegments, absolute_IE_seg$Segment),] 
 png(paste0(dir, "/Figures/IPMHinHIM_Segments.png"),  res = 600, width = 7, height = 7, units = "in")
 par(mar=c(5,4.5,1,1))
 x = barplot(data_stacked[,1:length(HIMSegments)], names.arg = gsub('egment_','',HIMSegments), 
-        cex.names = 1, cex.axis = 1.5, cex.lab = 1.5,  las = 2,
+        cex.names = 1, cex.axis = 1.5, cex.lab = 1.3,  las = 2,
         main = "", 
-        ylab = "Number of IE per million reads of host", 
+        ylab = "Number of HIM-mediated IPMH", 
         border = NA,
         col = colors,
         legend.text = T,
         ylim = c(0,ceiling(max(colSums(data_stacked[,1:length(HIMSegments)]))))) 
 #Add value abosulte IE on top bars:
-text(x, colSums(data_stacked)+0.07, labels =  as.character(as.matrix(absolute_IE_seg[,3])), cex = 0.9)
+text(x, colSums(data_stacked)+0.1, labels =  as.character(as.matrix(absolute_IE_seg[,3])), cex = 0.9)
 #Add value abosulte chimeric reads on top bars:
-text(x, colSums(data_stacked)+0.02, labels =  paste0('(',as.character(as.matrix(absolute_IE_seg[,2])),')'), cex = 0.8)
+text(x, colSums(data_stacked)+0.03, labels =  paste0('(',as.character(as.matrix(absolute_IE_seg[,2])),')'), cex = 0.8)
 
 dev.off()
 
@@ -146,13 +146,13 @@ absolute_IE_sample = bind_rows(lapply(HIM_IE, function(x){
 png(paste0(dir, "/Figures/IPMHinHIM_Samples.png"),  res = 600, width = 7, height = 7, units = "in")
 par(mar=c(5.8,4.5,1,1))
 x = barplot(data_stacked[,"All segments"], 
-        cex.names = 1.2, cex.axis = 1.5, cex.lab = 1.5,  las =2,
+        cex.names = 1, cex.axis = 1.5, cex.lab = 1.5,  las =2,
         main = "", 
-        ylab = "Number of IE per million reads of host",   
+        ylab = "Number of HIM-mediated IPMH",   
         border = NA,
         col = colors,
         legend.text = F,
         ylim = c(0,max(ceiling(data_stacked[,"All segments"]))))
-text(x, data_stacked[,"All segments"]+0.11, labels =  as.character(as.matrix(absolute_IE_sample[,3])), cex = 0.9) 
-text(x, data_stacked[,"All segments"]+0.03, labels =  paste0('(',as.character(as.matrix(absolute_IE_sample[,2])),')'), cex = 0.8) 
+text(x, data_stacked[,"All segments"]+0.14, labels =  as.character(as.matrix(absolute_IE_sample[,3])), cex = 0.9) 
+text(x, data_stacked[,"All segments"]+0.04, labels =  paste0('(',as.character(as.matrix(absolute_IE_sample[,2])),')'), cex = 0.8) 
 dev.off()

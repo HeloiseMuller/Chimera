@@ -38,10 +38,10 @@ cov = lapply(paste0(depth_dir, samples, "_CtBV.cov"),fread)
 
 
 ### Main ###
-
 png(paste0(dir,"/Figures/Coverage.png"),  width = 8, height = 5, units = 'in', res = 600)    
 layout(matrix(c(1,1,2), 1, 3, byrow=TRUE))
 barplot(t(as.matrix(Coverage[,3:5])), beside=T, names.arg=Coverage$Names,
+    cex.names = 0.7,
     legend.text= c(species[1], species[2], "Proviral segments"), 
     col = c("darkgreen", "gold", "red3"), 
     ylim = c(0, ceiling(max(Coverage$depth1, Coverage$depth2, Coverage$depthBV)*1.3)), 

@@ -144,7 +144,7 @@ png(paste0(dir, "/Figures/Mirror_Depth_NbRead.png"),  width = 10, height = 10, u
 #Figure in mirror Cov & NbReads with ratio on top of each bars
 
 
-layout(matrix(c(1,1,1,1,2,2,2,2,3,3,3,3,0,0,4,4,4,4,5,5,5,5,0,0), 2, 3*4, byrow=TRUE))
+layout(matrix(c(1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,6), 2, 3*4, byrow=TRUE))
 lapply(seq_along(dt_cor), function(i) {
     x = setorder(dt_cor[[i]], NbChimera)
     pt = barplot(x$NbChimera, names.arg=x$Seg, ylim=c(-round_any(max(x$Depth), ifelse(max(x$Depth)/100>1, 100, 10), f=ceiling),round_any(max(x$NbChimera),  ifelse(max(x$Depth)/100>1, 100, 10), f=ceiling)+30), cex.names=0.5, las=2,  col="gray", border=F, yaxt='n', main = names[i])
@@ -197,12 +197,12 @@ dt_cor_corrected %>% ggplot(aes(x=Sample, y=ratioCorrected, fill=Sample)) +
 dev.off()
 
 names(colors) = samples
-png(paste0(dir, "/Figures/est.png"),  width = 7, height = 5, units = 'in', res = 600)
-
+png(paste0(dir, "/Figures/Ratio.png"),  width = 7, height = 5, units = 'in', res = 600)
+names(names) = samples
 dt_cor_corrected %>% ggplot(aes(x=as.character(Seg), y=ratioCorrected)) +
     geom_point() +
     scale_color_manual(values=colors) +
-    facet_grid(sample~.) +
+    facet_grid(sample~., labeller = labeller(sample=names)) +
     theme(legend.position = "none") +
     xlab("Segments") +  ylab("Ratio depth/chimera") +
     geom_hline(yintercept = 0.63, linetype = "dashed")
