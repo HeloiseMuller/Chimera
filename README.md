@@ -1,9 +1,11 @@
 # Pipeline Chimera
 
-This pipeline allows to process data the same way as in Muller et al. (2021) https://doi.org/10.1128/JVI.00684-21. It was written for the article Muller et al. (202?). It is composed of several scripts, located in `src/`, to run in the same order as listed here. 
+This pipeline allows to process data the same way as in Muller et al. (2021) https://doi.org/10.1128/JVI.00684-21. It was written for the article Muller et al. (2022) https://doi.org/10.1111/mec.16685. It is composed of several scripts, located in `src/`, to run in the same order as listed here. 
 The numeroted scripts process chimeric reads specifically for studies on polyDNAviruses.
 
-In `examples/` one can find examples of files needed to run the scripts. Examples are given for chimeric reads between CtBV (bracoviruses of _Cotesia typhae_) and the leiptoptera _Sesamia nonagrioides_.
+In `examples/`, one can find examples of files needed to run the scripts. Examples are given for chimeric reads between CtBV (bracoviruses of _Cotesia typhae_) and the leiptoptera _Sesamia nonagrioides_.
+
+In `scriptsArticles/`, one can find the scripts used in Muller et al. (2022) and Heisserer et al. (2022). 
 
 ## Run blastn
 Blastn has to be run on the two reference genomes between which one is looking for chimeric reads. One can use the WorkflowBowBlast (https://github.com/HeloiseMuller/WorkflowBowBlast) to process the data until this step.
@@ -12,7 +14,7 @@ Blastn has to be run on the two reference genomes between which one is looking f
 
 This script look for chimeric reads between two genomes.
 It reads the outputs of the two blastn and it ouputs a file named  *_chimera_spWasp_vs_spHost.txt
-One has to directly modify the head of the script:
+One can directly modify the head of the script:
 ```
 Path and variables to set
 species = c("spWasp","spHost")                      
@@ -35,11 +37,11 @@ Run the script with `Rscript FindChimericReads.R`
 
 ## 1-Coverage.R
 
-This script make a plot of the sequencing depth and coverage on species1, species2, and polyDNAviruses.
+This script makes a plot of the sequencing depth and coverage on species1, species2, and polyDNAviruses.
 
 ## 2-FindChimera_alongReIntegratedSegments.R
 
-This script read the file *_chimera_spWasp_vs_spHost.txt and outputs several files:
+This script reads the file *_chimera_spWasp_vs_spHost.txt and outputs several files:
 -  *_chimera_spWasp_vs_spHost_ordered.txt: the only difference with the input is that the table is ordered, i.e. that for each chimeric read, the information on the wasp has the suffix .s and the information on the host has no suffix.
 -  *_chimera_spWasp_vs_spHost_ordered.bedSpWasp: bed file of the coordinates on the wasp where the chimeric reads map
 -  *_Reads_SReintegrated_cat.lst: list of the reads that map on polydnavirus that have to be processed differently. Indeed, Re-integrated segments cannot integrate in the host genome so these chimeric reads probably correspond to the parental proviral segments.
@@ -51,17 +53,17 @@ Rscript 2-FindChimera_alongReIntegratedSegments.R --args --config_file=\"config.
 
 ## 2bis-FindChimera_alongReIntegratedSegments.sh
 
-This bash script checks whether chimeric reads from re-integrated segments map on the parental proviral segments. It outputs *_Reads_SReintegrated_cat_vs_CtBV.txt. One can use this output to run FindChimericReads.R agin, to validate these chimeric reads. For this, replace the output of the blastn against spWasp by *_Reads_SReintegrated_cat_vs_CtBV.txt, keep the output of the blastn againt spHost, and change the name of the output at the very bottom of the scipt FindChimericReads.R.
+This bash script checks whether chimeric reads from re-integrated segments map on the parental proviral segments. It outputs *_Reads_SReintegrated_cat_vs_CtBV.txt. One can use this output to run FindChimericReads.R again, to validate these chimeric reads. For this, replace the output of the blastn against spWasp by *_Reads_SReintegrated_cat_vs_CtBV.txt, keep the output of the blastn againt spHost, and change the name of the output at the very bottom of the scipt FindChimericReads.R.
 
 ## 3-FindChimera_alongSegments.R
 
-This script identified chimeric reads and estimate the number of integration events.
+This script identifies chimeric reads and estimate the number of integration events.
 
 Inputs: 
 - a configuration file
 - the bed file of proviral segments
-- metadata about the proviral segments, with their positions, the presence of HIM, and their orientation
-- *_Reads_SReintegrated_cat_vs_CtBV.txt. The script automtaticcaly look whether this file exists in the directory. If it does, it sums up their number of chimeric reads. If the file does not exist, it will simply pass this step. 
+- metadata about the proviral segments, with their positions, the presence of HIM, and their orientations
+- *_Reads_SReintegrated_cat_vs_CtBV.txt. The script automaticaly looks whether this file exists in the directory. If it does, it sums up their number of chimeric reads. If the file does not exist, it will simply pass this step. 
 
 Outputs:
 - *_all_chimera_alongSegments.txt: file that contains all chimeric reads between the host and the proviral segments from the bed file.
@@ -77,7 +79,7 @@ Rscript 3-FindChimera_alongSegments.R --args --config_file=\"config.Rdata\" --be
 
 ## 4-FigureChimericReads_alongSegments.R
 
-This R script output a pdf that shows where chimeric reads map for all segments with more than 2 chimeric reads. On the right, it plots a zoom on HIM, if the segment has HIM.
+This R script outputs a pdf that shows where chimeric reads map for all segments with more than 2 chimeric reads. On the right, it plots a zoom on HIM, if the segment has HIM.
 
 One has to run the script a first time to visualy set some graphical parametes, before running it a second time.
 ```
@@ -104,7 +106,7 @@ The user might want to modify the four last parameters to get a cleaner graph. \
  ```
  It reads two files:*_all_chimera_alongSegments_IE.txt and *_all_chimera_alongHIMs_IE.txt
  
- It outputs 2 figures: both show the number of HIM-mediated IMPH (number of Integration event Per Million reads of Host sequenced), one for each sample, and one for each proviral segment.
+ It outputs 2 figures: both show the number of HIM-mediated IPMH (number of Integration event Per Million reads of Host sequenced), one for each sample, and one for each proviral segment.
  It also outputs summaized tables giving the number of IPMH for each sample and segment, and also the percentage of IE that falls in HIM.
  
  ## 6-NbIEvsDepth.R
